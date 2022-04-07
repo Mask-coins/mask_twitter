@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 
+
 class FileWriter(object):
     def __init__(self, file_path):
         self._file_path = file_path
