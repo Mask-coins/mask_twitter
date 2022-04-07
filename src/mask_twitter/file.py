@@ -12,10 +12,22 @@ class FileWriter(object):
         with open(self._file_path, encoding="utf-8", mode='a') as fp:
             fp.write(json.dumps(obj=obj, ensure_ascii=False))
 
-    def load_tweets(self,api):
+    def load_tweets_json(self,api):
         with open(self._file_path, encoding="utf-8", mode='r') as fp:
-            js = fp.read()
-        tweet = TweepyStatus.parse(api,js)
-        return tweet
+            tweets = []
+            text = fp.readline()
+            while text:
+                tweets.append(json.loads(text))
+                text = fp.readline()
+            return tweets
+
+    def load_tweepy_status(self,api):
+        with open(self._file_path, encoding="utf-8", mode='r') as fp:
+            tweets = []
+            text = fp.readline()
+            while text:
+                tweets.append(TweepyStatus.parse(api,text))
+                text = fp.readline()
+            return tweets
 
 
