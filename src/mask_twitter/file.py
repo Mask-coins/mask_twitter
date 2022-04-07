@@ -8,11 +8,11 @@ class FileWriter(object):
     def __init__(self, file_path):
         self._file_path = file_path
 
-    def add(self, obj:dict|list):
+    def add(self, obj: dict | list):
         with open(self._file_path, encoding="utf-8", mode='a') as fp:
             fp.write(json.dumps(obj=obj, ensure_ascii=False))
 
-    def load_tweets_json(self,api):
+    def load_tweets_json(self) -> list[dict]:
         with open(self._file_path, encoding="utf-8", mode='r') as fp:
             tweets = []
             text = fp.readline()
@@ -21,13 +21,11 @@ class FileWriter(object):
                 text = fp.readline()
             return tweets
 
-    def load_tweepy_status(self,api):
+    def load_tweepy_status(self, api) -> list[TweepyStatus]:
         with open(self._file_path, encoding="utf-8", mode='r') as fp:
             tweets = []
             text = fp.readline()
             while text:
-                tweets.append(TweepyStatus.parse(api,text))
+                tweets.append(TweepyStatus.parse(api, text))
                 text = fp.readline()
             return tweets
-
-
