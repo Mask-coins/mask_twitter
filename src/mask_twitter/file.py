@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from tweepy.models import Status as TweepyStatus
 
 
 class FileWriter(object):
@@ -10,5 +11,11 @@ class FileWriter(object):
     def add(self, obj:dict|list):
         with open(self._file_path, encoding="utf-8", mode='a') as fp:
             fp.write(json.dumps(obj=obj, ensure_ascii=False))
+
+    def load_tweets(self,api):
+        with open(self._file_path, encoding="utf-8", mode='r') as fp:
+            js = fp.read()
+        tweet = TweepyStatus.parse(api,js)
+        return tweet
 
 
