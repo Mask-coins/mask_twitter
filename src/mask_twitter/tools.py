@@ -100,7 +100,7 @@ class TweetGetter(object):
 
     def get_tweets(self, id_num: int):
         tweets = []
-        for tweet in tweepy.Cursor(self._api.user_timeline, id=id_num, cursor=-1).items():
+        for tweet in tweepy.Cursor(self._api.user_timeline, id=id_num).items():
             tweets.append(tweet._json)
         return tweets
 
