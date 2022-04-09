@@ -23,7 +23,7 @@ class UserScore(object):
         user_id = pd.Index(user_id_list, dtype="u8", name="user_id")
         screen_name = pd.Series(screen_name_list, dtype=str, index=user_id, name="screen_name")
         since_id = pd.Series(since_id_list, dtype=str, index=user_id, name="since_id")
-        update = pd.Series(update_list, dtype=datetime.datetime, index=user_id, name="update")
+        update = pd.Series(update_list, dtype=str, index=user_id, name="update")
         score = pd.Series(score_list, dtype=str, index=user_id, name="score")
 
         self.df = pd.DataFrame([], index=user_id)
