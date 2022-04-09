@@ -148,6 +148,8 @@ class TweetCollectorSystem(object):
             user_score = UserScore.read_csv(self.dir_path+"/user_score/user_score.csv")
             user_score.sort()
             print(user_score.df)
+            print(user_score.df.iloc[0,:].T)
+            print(user_score.df.dtypes)
             ids = user_score.choose(n=n, epsilon=epsilon)
             print("ids",len(ids))
             user_id_list = []
