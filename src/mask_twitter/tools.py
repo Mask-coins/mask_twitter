@@ -19,16 +19,16 @@ class UserScore(object):
             user_id_list,
             screen_name_list,
             since_id_list,
-            score_list
-    ):
-        self.df = pd.DataFrame(
-            OrderedDict(
-                screen_name=screen_name_list,
-                since_id=since_id_list,
-                score=score_list
-            ),
-            index=pd.Index(user_id_list, name="user_id"),
-        )
+            score_list):
+        user_id = pd.Index(user_id_list, dtype="u8", name="user_id")
+        screen_name = pd.Series(screen_name_list, dtype=str, index=user_id, name="screen_name")
+        since_id = pd.Series(since_id_list, dtype=str, index=user_id, name="since_id")
+        score = pd.Series(score_list, dtype=str, index=user_id, name="score")
+
+        self.df = pd.DataFrame([], index=user_id)
+        self.df["screen_name"] = screen_name
+        self.df["since_id"] = since_id
+        self.df["score"] = score
 
     def concat(self, other:UserScore):
         self.df = pd.concat([self.df,other.df])
