@@ -155,14 +155,14 @@ class TweetCollectorSystem(object):
                         if kw in tweet["text"]:
                             count += 1
                     # https://developer.twitter.com/en/docs/twitter-api/v1/data-dictionary/object-model/tweet
-                    if "in_reply_to_user_id" in tweet:
+                    if "in_reply_to_user_id" in tweet and tweet["in_reply_to_user_id"]:
                         if tweet["in_reply_to_user_id"] not in user_score.df.index:
                             print(type(tweet["in_reply_to_user_id"] ),tweet["in_reply_to_user_id"])
                             user_id_list.append(tweet["in_reply_to_user_id"])
                             screen_name_list.append(tweet["in_reply_to_screen_name"])
                             since_id_list.append(-1)
                             score_list.append(-1)
-                    if "retweeted_status" in tweet:
+                    if "retweeted_status" in tweet and tweet["retweeted_status"]:
                         if tweet["retweeted_status"]["user"]["id"] not in user_score.df.index:
                             print(type(tweet["retweeted_status"]["user"]["id"]),tweet["retweeted_status"]["user"]["id"])
                             user_id_list.append(tweet["retweeted_status"]["user"]["id"])
