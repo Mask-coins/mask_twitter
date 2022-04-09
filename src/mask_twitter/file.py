@@ -11,6 +11,7 @@ class FileWriter(object):
     def add(self, obj: dict | list):
         with open(self._file_path, encoding="utf-8", mode='a') as fp:
             fp.write(json.dumps(obj=obj, ensure_ascii=False))
+            fp.write("\n")
 
     def load_tweets_json(self) -> list[dict]:
         with open(self._file_path, encoding="utf-8", mode='r') as fp:
