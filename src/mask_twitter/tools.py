@@ -55,7 +55,17 @@ class UserScore(object):
     @staticmethod
     def read_csv(file_path):
         u = UserScore([],[],[],[])
-        u.df = pd.read_csv(file_path, encoding="utf-8", index_col=0)
+        u.df = pd.read_csv(
+            file_path,
+            encoding="utf-8",
+            index_col=0,
+            dtype={
+                "user_id":int,
+                "screen_name":str,
+                "since_id":int,
+                "score":float
+            }
+        )
         return u
 
     def to_csv(self, file_path):
