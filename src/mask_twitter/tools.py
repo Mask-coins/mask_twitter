@@ -8,7 +8,6 @@ import pandas as pd
 import tweepy
 from tweepy.models import User as TweepyUser
 from tweepy.errors import TweepyException
-from collections import OrderedDict
 
 from .file import FileWriter
 
@@ -160,14 +159,14 @@ class TweetCollectorSystem(object):
                             print(type(tweet["in_reply_to_user_id"] ),tweet["in_reply_to_user_id"])
                             user_id_list.append(tweet["in_reply_to_user_id"])
                             screen_name_list.append(tweet["in_reply_to_screen_name"])
-                            since_id_list.append(-1)
+                            since_id_list.append(0)
                             score_list.append(-1)
                     if "retweeted_status" in tweet and tweet["retweeted_status"]:
                         if tweet["retweeted_status"]["user"]["id"] not in user_score.df.index:
                             print(type(tweet["retweeted_status"]["user"]["id"]),tweet["retweeted_status"]["user"]["id"])
                             user_id_list.append(tweet["retweeted_status"]["user"]["id"])
                             screen_name_list.append(tweet["retweeted_status"]["user"]["screen_name"])
-                            since_id_list.append(-1)
+                            since_id_list.append(0)
                             score_list.append(-1)
                 score = 1 - 0.5**count
                 user_score.df["score"][idx] = score + 0.5 * user_score.df["score"][idx]
