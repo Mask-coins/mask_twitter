@@ -129,6 +129,7 @@ class TweetCollectorSystem(object):
     def collect(self):
         if os.path.isfile(self.dir_path+"/user_score/user_score.csv"):
             user_score = UserScore.read_csv(self.dir_path+"/user_score/user_score.csv")
+            user_score.sort()
             print(user_score.df)
             ids = user_score.choose(0.2)
             user_id_list = []
@@ -136,6 +137,7 @@ class TweetCollectorSystem(object):
             since_id_list = []
             score_list = []
             for idx in ids:
+                print("user",idx)
                 if user_score.df["since_id"][idx] == 0:
                     tweets = self.tg.get_tweets(id_num=idx)
                 else:
