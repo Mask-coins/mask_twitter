@@ -68,9 +68,10 @@ class UserScore(object):
                 "user_id":"u8",
                 "screen_name":str,
                 "since_id":"u8",
-                "update":datetime.datetime,
+                "update":str,
                 "score":float,
-            }
+            },
+            parse_dates=[3]
         )
         return u
 
@@ -157,7 +158,7 @@ class TweetCollectorSystem(object):
             for idx in ids:
                 print("user")
                 print(user_score.df.loc[idx,:])
-                if user_score.df.loc[idx,"update"] > datetime.datetime.now() - datetime.timedelta(days=1):
+                if user_score.df.loc[idx,"update"] > datetime.datetime.now() - datetime.timedelta(days=1.0):
                     print("SKIP (update)")
                     continue
                 if user_score.df["since_id"][idx] == 0:
