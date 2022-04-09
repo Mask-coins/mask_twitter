@@ -60,9 +60,9 @@ class UserScore(object):
             encoding="utf-8",
             index_col=0,
             dtype={
-                "user_id":int,
+                "user_id":"u8",
                 "screen_name":str,
-                "since_id":int,
+                "since_id":"u8",
                 "score":float
             }
         )
@@ -137,7 +137,7 @@ class TweetCollectorSystem(object):
             since_id_list = []
             score_list = []
             for idx in ids:
-                if user_score.df["since_id"][idx] < 0:
+                if user_score.df["since_id"][idx] == 0:
                     tweets = self.tg.get_tweets(id_num=idx)
                 else:
                     tweets = self.tg.get_tweets_since(id_num=idx, since_id=user_score.df["since_id"][idx])
