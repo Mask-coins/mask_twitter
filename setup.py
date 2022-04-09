@@ -12,7 +12,7 @@ def _requires_from_file(filename):
 
 setup(
     name="mask_twitter",
-    version="0.0.26",
+    version="0.0.27",
     description="",
     author="Mask_coins",
     url="https://github.com/Mask-coins/mask_twitter",

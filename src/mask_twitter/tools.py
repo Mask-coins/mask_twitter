@@ -159,7 +159,7 @@ class TweetCollectorSystem(object):
                     if "in_reply_to_user_id" in tweet and tweet["in_reply_to_user_id"]:
                         if tweet["in_reply_to_user_id"] not in user_score.df.index:
                             if tweet["in_reply_to_user_id"] not in user_id_list:
-                                print(type(tweet["in_reply_to_user_id"] ),tweet["in_reply_to_user_id"])
+                                #print(type(tweet["in_reply_to_user_id"] ),tweet["in_reply_to_user_id"])
                                 user_id_list.append(tweet["in_reply_to_user_id"])
                                 screen_name_list.append(tweet["in_reply_to_screen_name"])
                                 since_id_list.append(0)
@@ -167,7 +167,7 @@ class TweetCollectorSystem(object):
                     if "retweeted_status" in tweet and tweet["retweeted_status"]:
                         if tweet["retweeted_status"]["user"]["id"] not in user_score.df.index:
                             if tweet["retweeted_status"]["user"]["id"] not in user_id_list:
-                                print(type(tweet["retweeted_status"]["user"]["id"]),tweet["retweeted_status"]["user"]["id"])
+                                #print(type(tweet["retweeted_status"]["user"]["id"]),tweet["retweeted_status"]["user"]["id"])
                                 user_id_list.append(tweet["retweeted_status"]["user"]["id"])
                                 screen_name_list.append(tweet["retweeted_status"]["user"]["screen_name"])
                                 since_id_list.append(0)
