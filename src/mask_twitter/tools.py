@@ -71,8 +71,6 @@ class TweetGetter(object):
             TWITTER_COUSUMER_SECRET,
             TWITTER_ACCESS_TOKEN,
             TWITTER_ACCESS_TOKEN_SECRET,
-            json_dir_path,
-            user_score_path
     ):
         auth = tweepy.OAuthHandler(
             TWITTER_COUSUMER_KEY,
@@ -81,8 +79,6 @@ class TweetGetter(object):
             TWITTER_ACCESS_TOKEN,
             TWITTER_ACCESS_TOKEN_SECRET)
         self._api = tweepy.API(auth, wait_on_rate_limit=True)
-        self._json_dir_path = json_dir_path
-        self.user_score_path = user_score_path
 
     def get_profile(self, id_num: int = None, screen_name: str = None) -> None|TweepyUser:
         try:
