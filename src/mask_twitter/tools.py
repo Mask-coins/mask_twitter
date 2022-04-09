@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+
 import pandas as pd
 import tweepy
 from tweepy.models import User as TweepyUser
@@ -8,7 +10,13 @@ from collections import OrderedDict
 
 
 class UserScore(object):
-    def __init__(self, user_id_list, screen_name_list, since_id_list, score_list):
+    def __init__(
+            self,
+            user_id_list,
+            screen_name_list,
+            since_id_list,
+            score_list
+    ):
         self.df = pd.DataFrame(
             OrderedDict(
                 screen_name_list=screen_name_list,
@@ -23,6 +31,21 @@ class UserScore(object):
 
     def sort(self):
         self.df.sort_index(ascending=False, inplace=True)
+
+    def choose(self, epsilon:float, n=300):
+        rand_num = math.floor(n*epsilon)
+        chosen = set()
+        df = self.df.sample(n=rand_num)
+        for idx in df.idx:
+            chosen.add(idx)
+        i = 0
+        for idx in self.df.index:
+            if i > n:
+                break
+            if idx in chosen:
+                continue
+            chosen.add(idx)
+            i += 1
 
 
 class TweetGetter(object):
