@@ -132,6 +132,7 @@ class TweetCollectorSystem(object):
             user_score.sort()
             print(user_score.df)
             ids = user_score.choose(0.1, n=20)
+            print("ids",len(ids))
             user_id_list = []
             screen_name_list = []
             since_id_list = []
