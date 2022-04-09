@@ -11,7 +11,7 @@ from tweepy.models import User as TweepyUser
 from tweepy.errors import TweepyException
 from collections import OrderedDict
 
-from src.mask_twitter.file import FileWriter
+from file import FileWriter
 
 
 class UserScore(object):
