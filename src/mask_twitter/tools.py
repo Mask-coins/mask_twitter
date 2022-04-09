@@ -174,6 +174,7 @@ class TweetCollectorSystem(object):
                                 score_list.append(-1)
                 score = 1 - 0.5**count
                 user_score.df["score"][idx] = score + 0.5 * user_score.df["score"][idx]
+                print("id",idx,"count",count,"score",score)
             new_user_score = UserScore(
                 user_id_list=user_id_list,
                 screen_name_list=screen_name_list,
