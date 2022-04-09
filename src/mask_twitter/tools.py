@@ -156,18 +156,20 @@ class TweetCollectorSystem(object):
                     # https://developer.twitter.com/en/docs/twitter-api/v1/data-dictionary/object-model/tweet
                     if "in_reply_to_user_id" in tweet and tweet["in_reply_to_user_id"]:
                         if tweet["in_reply_to_user_id"] not in user_score.df.index:
-                            print(type(tweet["in_reply_to_user_id"] ),tweet["in_reply_to_user_id"])
-                            user_id_list.append(tweet["in_reply_to_user_id"])
-                            screen_name_list.append(tweet["in_reply_to_screen_name"])
-                            since_id_list.append(0)
-                            score_list.append(-1)
+                            if tweet["in_reply_to_user_id"] not in user_id_list:
+                                print(type(tweet["in_reply_to_user_id"] ),tweet["in_reply_to_user_id"])
+                                user_id_list.append(tweet["in_reply_to_user_id"])
+                                screen_name_list.append(tweet["in_reply_to_screen_name"])
+                                since_id_list.append(0)
+                                score_list.append(-1)
                     if "retweeted_status" in tweet and tweet["retweeted_status"]:
                         if tweet["retweeted_status"]["user"]["id"] not in user_score.df.index:
-                            print(type(tweet["retweeted_status"]["user"]["id"]),tweet["retweeted_status"]["user"]["id"])
-                            user_id_list.append(tweet["retweeted_status"]["user"]["id"])
-                            screen_name_list.append(tweet["retweeted_status"]["user"]["screen_name"])
-                            since_id_list.append(0)
-                            score_list.append(-1)
+                            if tweet["retweeted_status"]["user"]["id"] not in user_id_list:
+                                print(type(tweet["retweeted_status"]["user"]["id"]),tweet["retweeted_status"]["user"]["id"])
+                                user_id_list.append(tweet["retweeted_status"]["user"]["id"])
+                                screen_name_list.append(tweet["retweeted_status"]["user"]["screen_name"])
+                                since_id_list.append(0)
+                                score_list.append(-1)
                 score = 1 - 0.5**count
                 user_score.df["score"][idx] = score + 0.5 * user_score.df["score"][idx]
             new_user_score = UserScore(
