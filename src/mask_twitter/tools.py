@@ -41,6 +41,8 @@ class UserScore(object):
         df = self.df.sample(n=min(rand_num,n))
         for idx in df.index:
             chosen.add(idx)
+        random_len = len(chosen)
+        print("Random", len(chosen))
         i = 0
         for idx in self.df.index:
             if i > n:
@@ -49,6 +51,7 @@ class UserScore(object):
                 continue
             chosen.add(idx)
             i += 1
+        print("Greedy", len(chosen) - random_len)
         return chosen
 
     @staticmethod
