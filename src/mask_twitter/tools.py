@@ -1,8 +1,28 @@
 from __future__ import annotations
 
+import pandas as pd
 import tweepy
 from tweepy.models import User as TweepyUser
 from tweepy.errors import TweepyException
+from collections import OrderedDict
+
+
+class UserScore(object):
+    def __init__(self, user_id_list, screen_name_list, since_id_list, score_list):
+        self.df = pd.DataFrame(
+            OrderedDict(
+                screen_name_list=screen_name_list,
+                since_id_list=since_id_list,
+                score_list=score_list
+            ),
+            index=pd.Index(user_id_list, name="user_id"),
+        )
+
+    def concat(self, other:UserScore):
+        self.df = pd.concat([self.df,other.df])
+
+    def sort(self):
+        self.df.sort_index(ascending=False, inplace=True)
 
 
 class TweetGetter(object):
@@ -22,7 +42,6 @@ class TweetGetter(object):
             TWITTER_ACCESS_TOKEN_SECRET)
         self._api = tweepy.API(auth, wait_on_rate_limit=True)
         self._json_dir_path = json_dir_path
-        self._db_path = db_path
 
     def get_profile(self, id_num: int = None, screen_name: str = None) -> None|TweepyUser:
         try:
@@ -42,7 +61,27 @@ class TweetGetter(object):
                 profile_contents = self._api.get_user(id=id_num)
         return profile_contents
 
+    def get_tweets(self, id_num: int):
+        tweets = []
+        for tweet in tweepy.Cursor(self._api.user_timeline, id=id_num, cursor=-1).items():
+            tweets.append(tweet._json)
+        return tweets
+
+    def get_tweets_since(self, id_num: int, since_id: int):
+        tweets = []
+        for tweet in tweepy.Cursor(self._api.user_timeline, id=id_num, cursor=-1, since_id=since_id).items():
+            tweets.append(tweet._json)
+        return tweets
 
 
+
+
+class Graph(object):
+    def __init__(self, id):
+        self._id=id
+        # self._tweets_score["date"]["user_id"]["tweet_id"]
+        self._tweets_score:dict[int,dict[int,dict[int,float]]] = dict()
+        # self._edge["date"]["from_id"]["to_id"]["type"]["tweet_id"]
+        self._edge:dict[int,dict[int,dict[int,dict[int,dict[int,float]]]]] = dict()
 
 
