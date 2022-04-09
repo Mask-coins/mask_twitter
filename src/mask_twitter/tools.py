@@ -3,7 +3,6 @@ from __future__ import annotations
 import datetime
 import math
 import os
-import pprint
 
 import pandas as pd
 import tweepy
@@ -134,30 +133,34 @@ class TweetCollectorSystem(object):
                     tweets = self.tg.get_tweets_since(id_num=idx, since_id=user_score.df["since_id"][idx])
                 count = 0
                 for tweet in tweets:
-                    pprint.pprint(tweet)
+                    # pprint.pprint(tweet)
                     dtime = tweet["created_at"]
                     user_score.df["since_id"][idx] = max(tweet["id"],user_score.df["since_id"][idx])
                     dt = datetime.datetime.strptime(dtime,'%a %b %d %H:%M:%S +0000 %Y')
                     day = datetime.datetime.strftime(dt, '%Y-%m-%d')
                     if day not in self.fw:
-                        self.fw[day] = FileWriter(self.dir_path+"/tweets/"+day)
+                        self.fw[day] = FileWriter(self.dir_path+"/tweets/"+day+".jsonl")
                     self.fw[day].add(tweet)
                     for kw in self.key_word_list:
                         if kw in tweet["text"]:
                             count += 1
                     # https://developer.twitter.com/en/docs/twitter-api/v1/data-dictionary/object-model/tweet
                     if "in_reply_to_user_id" in tweet:
-                        user_id_list.append(tweet["in_reply_to_user_id"])
-                        screen_name_list.append(tweet["in_reply_to_screen_name"])
-                        since_id_list.append(-1)
-                        score_list.append(-1)
+                        if tweet["in_reply_to_user_id"] not in user_score.df.index:
+                            print(type(tweet["in_reply_to_user_id"] ),tweet["in_reply_to_user_id"])
+                            user_id_list.append(tweet["in_reply_to_user_id"])
+                            screen_name_list.append(tweet["in_reply_to_screen_name"])
+                            since_id_list.append(-1)
+                            score_list.append(-1)
                     if "retweeted_status" in tweet:
-                        user_id_list.append(tweet["retweeted_status"]["user"]["id"])
-                        screen_name_list.append(tweet["retweeted_status"]["user"]["screen_name"])
-                        since_id_list.append(-1)
-                        score_list.append(-1)
+                        if tweet["retweeted_status"]["user"]["id"] not in user_score.df.index:
+                            print(type(tweet["retweeted_status"]["user"]["id"]),tweet["retweeted_status"]["user"]["id"])
+                            user_id_list.append(tweet["retweeted_status"]["user"]["id"])
+                            screen_name_list.append(tweet["retweeted_status"]["user"]["screen_name"])
+                            since_id_list.append(-1)
+                            score_list.append(-1)
                 score = 1 - 0.5**count
-                user_score.df["score"][idx] = score + 0.5 + user_score.df["score"][idx]
+                user_score.df["score"][idx] = score + 0.5 * user_score.df["score"][idx]
             new_user_score = UserScore(
                 user_id_list=user_id_list,
                 screen_name_list=screen_name_list,
