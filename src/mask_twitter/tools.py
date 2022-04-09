@@ -3,6 +3,7 @@ from __future__ import annotations
 import datetime
 import math
 import os
+import pprint
 
 import pandas as pd
 import tweepy
@@ -121,9 +122,9 @@ class TweetCollectorSystem(object):
         self.dir_path = dir_path
         self.key_word_list = key_word_list
 
-    def collect(self, user_score_path):
-        if os.path.isfile(user_score_path):
-            user_score = UserScore.read_csv(user_score_path)
+    def collect(self):
+        if os.path.isfile(self.dir_path+"/user_score/user_score.csv"):
+            user_score = UserScore.read_csv(self.dir_path+"/user_score/user_score.csv")
             ids = user_score.choose(0.2)
             user_id_list = []
             screen_name_list = []
@@ -136,7 +137,9 @@ class TweetCollectorSystem(object):
                     tweets = self.tg.get_tweets_since(id_num=idx, since_id=user_score.df["since_id"][idx])
                 count = 0
                 for tweet in tweets:
+                    pprint.pprint(tweet)
                     dtime = tweet["created_at"]
+                    user_score.df["since_id"][idx] = max(tweet["id"],user_score.df["since_id"][idx])
                     dt = datetime.datetime.strptime(dtime,'%a %b %d %H:%M:%S +0000 %Y')
                     day = datetime.datetime.strftime(dt, '%Y-%m-%d')
                     if day not in self.fw:
@@ -158,7 +161,17 @@ class TweetCollectorSystem(object):
                         score_list.append(-1)
                 score = 1 - 0.5**count
                 user_score.df["score"][idx] = score + 0.5 + user_score.df["score"][idx]
-                
+            new_user_score = UserScore(
+                user_id_list=user_id_list,
+                screen_name_list=screen_name_list,
+                since_id_list=since_id_list,
+                score_list=score_list
+            )
+            user_score.concat(new_user_score)
+            user_score.to_csv(self.dir_path+"/user_score/user_score.csv")
+            dt = datetime.datetime.now()
+            dtstr = datetime.datetime.strftime(dt, '%Y-%m-%d=%H-%M-%S')
+            user_score.to_csv(self.dir_path+"/user_score/user_score_"+dtstr+".csv")
 
 
 
