@@ -150,7 +150,8 @@ class TweetCollectorSystem(object):
             since_id_list = []
             score_list = []
             for idx in ids:
-                print("user",idx)
+                print("user")
+                print(user_score.df.loc[idx,:])
                 if user_score.df["since_id"][idx] == 0:
                     tweets = self.tg.get_tweets(id_num=idx)
                 else:
