@@ -108,15 +108,24 @@ class TweetGetter(object):
 
     def get_tweets(self, id_num: int):
         tweets = []
-        for tweet in tweepy.Cursor(self._api.user_timeline, user_id=id_num).items():
-            tweets.append(tweet._json)
-        return tweets
+        try:
+            for tweet in tweepy.Cursor(self._api.user_timeline, user_id=id_num).items():
+                tweets.append(tweet._json)
+            return tweets
+        except tweepy.errors.Unauthorized as e:
+            print(e)
+            return tweets
 
     def get_tweets_since(self, id_num: int, since_id: int):
         tweets = []
-        for tweet in tweepy.Cursor(self._api.user_timeline, user_id=id_num, cursor=-1, since_id=since_id).items():
-            tweets.append(tweet._json)
-        return tweets
+        try:
+            for tweet in tweepy.Cursor(self._api.user_timeline, user_id=id_num, cursor=-1, since_id=since_id).items():
+                tweets.append(tweet._json)
+            return tweets
+        except tweepy.errors.Unauthorized as e:
+            print(e)
+            return tweets
+
 
 
 class TweetCollectorSystem(object):
