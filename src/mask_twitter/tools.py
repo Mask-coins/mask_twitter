@@ -182,8 +182,8 @@ class TweetCollectorSystem(object):
                                 screen_name_list.append(tweet["retweeted_status"]["user"]["screen_name"])
                                 since_id_list.append(0)
                                 score_list.append(-1)
-                score = 1 - 0.5**count
-                user_score.df["score"][idx] = score + 0.9 * user_score.df["score"][idx]
+                score = 1 - 0.9**count
+                user_score.df.loc[idx, "score"] = score + 0.5 * user_score.df.loc[idx, "score"]
                 print("id",idx,"count",count,"score",score,"new_score",user_score.df["score"][idx])
             new_user_score = UserScore(
                 user_id_list=user_id_list,
