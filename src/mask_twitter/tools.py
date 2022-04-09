@@ -131,7 +131,7 @@ class TweetCollectorSystem(object):
             user_score = UserScore.read_csv(self.dir_path+"/user_score/user_score.csv")
             user_score.sort()
             print(user_score.df)
-            ids = user_score.choose(0.1)
+            ids = user_score.choose(0.1, n=20)
             user_id_list = []
             screen_name_list = []
             since_id_list = []
