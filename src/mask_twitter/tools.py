@@ -38,7 +38,7 @@ class UserScore(object):
     def choose(self, epsilon:float, n=300):
         rand_num = math.floor(n*epsilon)
         chosen = set()
-        df = self.df.sample(n=min(rand_num,len(self.df.index)))
+        df = self.df.sample(n=min(rand_num,n))
         for idx in df.index:
             chosen.add(idx)
         i = 0
