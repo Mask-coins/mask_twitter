@@ -33,7 +33,7 @@ class UserScore(object):
         self.df = pd.concat([self.df,other.df])
 
     def sort(self):
-        self.df.sort_index(ascending=False, inplace=True)
+        self.df.sort_values("score",ascending=False, inplace=True)
 
     def choose(self, epsilon:float, n=300):
         rand_num = math.floor(n*epsilon)
