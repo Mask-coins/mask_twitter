@@ -18,15 +18,18 @@ class UserScore(object):
             user_id_list,
             screen_name_list,
             since_id_list,
+            update_list,
             score_list):
         user_id = pd.Index(user_id_list, dtype="u8", name="user_id")
         screen_name = pd.Series(screen_name_list, dtype=str, index=user_id, name="screen_name")
         since_id = pd.Series(since_id_list, dtype=str, index=user_id, name="since_id")
+        update = pd.Series(update_list, dtype=datetime.datetime, index=user_id, name="update")
         score = pd.Series(score_list, dtype=str, index=user_id, name="score")
 
         self.df = pd.DataFrame([], index=user_id)
         self.df["screen_name"] = screen_name
         self.df["since_id"] = since_id
+        self.df["update"] = update
         self.df["score"] = score
 
     def concat(self, other:UserScore):
@@ -56,7 +59,7 @@ class UserScore(object):
 
     @staticmethod
     def read_csv(file_path):
-        u = UserScore([],[],[],[])
+        u = UserScore([],[],[],[],[])
         u.df = pd.read_csv(
             file_path,
             encoding="utf-8",
@@ -65,7 +68,8 @@ class UserScore(object):
                 "user_id":"u8",
                 "screen_name":str,
                 "since_id":"u8",
-                "score":float
+                "update":datetime.datetime,
+                "score":float,
             }
         )
         return u
@@ -138,30 +142,36 @@ class TweetCollectorSystem(object):
         self.dir_path = dir_path
         self.key_word_list = key_word_list
 
-    def collect(self):
+    def collect(self, n=300, epsilon=0.1):
         if os.path.isfile(self.dir_path+"/user_score/user_score.csv"):
             user_score = UserScore.read_csv(self.dir_path+"/user_score/user_score.csv")
             user_score.sort()
             print(user_score.df)
-            ids = user_score.choose(0.1, n=20)
+            ids = user_score.choose(n=n, epsilon=epsilon)
             print("ids",len(ids))
             user_id_list = []
             screen_name_list = []
             since_id_list = []
+            update_list = []
             score_list = []
             for idx in ids:
                 print("user")
                 print(user_score.df.loc[idx,:])
+                if user_score.df.loc[idx,"update"] > datetime.datetime.now() - datetime.timedelta(days=1):
+                    print("SKIP (update)")
+                    continue
                 if user_score.df["since_id"][idx] == 0:
                     tweets = self.tg.get_tweets(id_num=idx)
                 else:
                     tweets = self.tg.get_tweets_since(id_num=idx, since_id=user_score.df["since_id"][idx])
                 count = 0
+                max_dt = datetime.datetime(2000, 1, 1, 0, 0, 0, 0)
                 for tweet in tweets:
                     # pprint.pprint(tweet)
                     dtime = tweet["created_at"]
-                    user_score.df["since_id"][idx] = max(tweet["id"],user_score.df["since_id"][idx])
+                    user_score.df.loc[idx,"since_id"] = max(tweet["id"],user_score.df.loc[idx,"since_id"])
                     dt = datetime.datetime.strptime(dtime,'%a %b %d %H:%M:%S +0000 %Y')
+                    max_dt = max(max_dt, dt)
                     day = datetime.datetime.strftime(dt, '%Y-%m-%d')
                     if day not in self.fw:
                         self.fw[day] = FileWriter(self.dir_path+"/tweets/"+day+".jsonl")
@@ -177,6 +187,7 @@ class TweetCollectorSystem(object):
                                 user_id_list.append(tweet["in_reply_to_user_id"])
                                 screen_name_list.append(tweet["in_reply_to_screen_name"])
                                 since_id_list.append(0)
+                                update_list.append(datetime.datetime(2000, 1, 1, 0, 0, 0, 0))
                                 score_list.append(-1)
                     if "retweeted_status" in tweet and tweet["retweeted_status"]:
                         if tweet["retweeted_status"]["user"]["id"] not in user_score.df.index:
@@ -185,14 +196,21 @@ class TweetCollectorSystem(object):
                                 user_id_list.append(tweet["retweeted_status"]["user"]["id"])
                                 screen_name_list.append(tweet["retweeted_status"]["user"]["screen_name"])
                                 since_id_list.append(0)
+                                update_list.append(datetime.datetime(2000, 1, 1, 0, 0, 0, 0))
                                 score_list.append(-1)
                 score = 1 - 0.9**count
                 user_score.df.loc[idx, "score"] = score + 0.5 * user_score.df.loc[idx, "score"]
                 print("id",idx,"count",count,"score",score,"new_score",user_score.df["score"][idx])
+                if len(tweets)==0:
+                    user_score.df.loc[idx, "update"] = datetime.datetime.now()
+                else:
+                    user_score.df.loc[idx, "update"] = max_dt
+
             new_user_score = UserScore(
                 user_id_list=user_id_list,
                 screen_name_list=screen_name_list,
                 since_id_list=since_id_list,
+                update_list=update_list,
                 score_list=score_list
             )
             user_score.concat(new_user_score)
