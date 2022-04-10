@@ -186,21 +186,27 @@ class TweetCollectorSystem(object):
                     if "in_reply_to_user_id" in tweet and tweet["in_reply_to_user_id"]:
                         if tweet["in_reply_to_user_id"] not in user_score.df.index:
                             if tweet["in_reply_to_user_id"] not in user_id_list:
-                                #print(type(tweet["in_reply_to_user_id"] ),tweet["in_reply_to_user_id"])
-                                user_id_list.append(tweet["in_reply_to_user_id"])
-                                screen_name_list.append(tweet["in_reply_to_screen_name"])
-                                since_id_list.append(0)
-                                update_list.append(datetime.datetime(2000, 1, 1, 0, 0, 0, 0))
-                                score_list.append(-1)
+                                for kw in self.key_word_list:
+                                    if kw in tweet["text"]:
+                                        #print(type(tweet["in_reply_to_user_id"] ),tweet["in_reply_to_user_id"])
+                                        user_id_list.append(tweet["in_reply_to_user_id"])
+                                        screen_name_list.append(tweet["in_reply_to_screen_name"])
+                                        since_id_list.append(0)
+                                        update_list.append(datetime.datetime(2000, 1, 1, 0, 0, 0, 0))
+                                        score_list.append(-1)
+                                        break
                     if "retweeted_status" in tweet and tweet["retweeted_status"]:
                         if tweet["retweeted_status"]["user"]["id"] not in user_score.df.index:
                             if tweet["retweeted_status"]["user"]["id"] not in user_id_list:
-                                #print(type(tweet["retweeted_status"]["user"]["id"]),tweet["retweeted_status"]["user"]["id"])
-                                user_id_list.append(tweet["retweeted_status"]["user"]["id"])
-                                screen_name_list.append(tweet["retweeted_status"]["user"]["screen_name"])
-                                since_id_list.append(0)
-                                update_list.append(datetime.datetime(2000, 1, 1, 0, 0, 0, 0))
-                                score_list.append(-1)
+                                for kw in self.key_word_list:
+                                    if kw in tweet["text"]:
+                                        #print(type(tweet["retweeted_status"]["user"]["id"]),tweet["retweeted_status"]["user"]["id"])
+                                        user_id_list.append(tweet["retweeted_status"]["user"]["id"])
+                                        screen_name_list.append(tweet["retweeted_status"]["user"]["screen_name"])
+                                        since_id_list.append(0)
+                                        update_list.append(datetime.datetime(2000, 1, 1, 0, 0, 0, 0))
+                                        score_list.append(-1)
+                                        break
                 score = 1 - 0.9**count
                 user_score.df.loc[idx, "score"] = score + 0.5 * user_score.df.loc[idx, "score"]
                 print("id",idx,"count",count,"score",score,"new_score",user_score.df["score"][idx])
