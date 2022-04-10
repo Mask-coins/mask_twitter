@@ -158,11 +158,11 @@ class TweetCollectorSystem(object):
             update_list = []
             score_list = []
             for idx in ids:
-                print("user")
-                print(user_score.df.loc[idx,:])
                 if user_score.df.loc[idx,"update"] > datetime.datetime.now() - datetime.timedelta(days=1.0):
                     print("SKIP (update)")
                     continue
+                print("user")
+                print(user_score.df.loc[idx,:])
                 if user_score.df["since_id"][idx] == 0:
                     tweets = self.tg.get_tweets(id_num=idx)
                 else:
@@ -188,7 +188,7 @@ class TweetCollectorSystem(object):
                             if tweet["in_reply_to_user_id"] not in user_id_list:
                                 for kw in self.key_word_list:
                                     if kw in tweet["text"]:
-                                        #print(type(tweet["in_reply_to_user_id"] ),tweet["in_reply_to_user_id"])
+                                        print(type(tweet["in_reply_to_user_id"] ),tweet["in_reply_to_user_id"])
                                         user_id_list.append(tweet["in_reply_to_user_id"])
                                         screen_name_list.append(tweet["in_reply_to_screen_name"])
                                         since_id_list.append(0)
@@ -200,7 +200,7 @@ class TweetCollectorSystem(object):
                             if tweet["retweeted_status"]["user"]["id"] not in user_id_list:
                                 for kw in self.key_word_list:
                                     if kw in tweet["text"]:
-                                        #print(type(tweet["retweeted_status"]["user"]["id"]),tweet["retweeted_status"]["user"]["id"])
+                                        print(type(tweet["retweeted_status"]["user"]["id"]),tweet["retweeted_status"]["user"]["id"])
                                         user_id_list.append(tweet["retweeted_status"]["user"]["id"])
                                         screen_name_list.append(tweet["retweeted_status"]["user"]["screen_name"])
                                         since_id_list.append(0)
